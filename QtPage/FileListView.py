@@ -1,7 +1,9 @@
 from PyQt5.QtWidgets import QMainWindow, QHBoxLayout, QVBoxLayout, QWidget, QFileDialog, QListWidget, QPushButton, QLabel, QGroupBox
-from PyQt5.QtGui import QPixmap, QImageReader
+from PyQt5.QtGui import QPixmap, QImageReader, QImage
 from PyQt5.QtCore import Qt
 import os
+import numpy as np
+from QtPage.ShowView import ShowView
 
 
 class FileListView():
@@ -35,13 +37,30 @@ class FileListView():
         self.clear_button.clicked.connect(self.clearList)
 
     def displayImage(self, item):
-
+        # origin image
         file_path = os.path.join(self.folder_path, item.text())
+        origin = QPixmap(file_path)
+        self.ShowViewIns.origin_image.setPixmap(
+            origin.scaled(640, 480, Qt.KeepAspectRatio))
 
-        # 加载图片并显示在 QLabel 控件中
-        pixmap = QPixmap(file_path)
-        self.ShowViewIns.origin_image.setPixmap(pixmap)
+        # init quality image
+        self.ShowViewIns.quality, qimage = ShowView.init_label_image(640, 480)
+        self.ShowViewIns.quality_image.setPixmap(
+            QPixmap.fromImage(qimage).scaled(320, 240, Qt.KeepAspectRatio))
+
+        # init angle image
+        self.ShowViewIns.angle, qimage = ShowView.init_label_image(640, 480)
+        self.ShowViewIns.angle_image.setPixmap(
+            QPixmap.fromImage(qimage).scaled(320, 240, Qt.KeepAspectRatio))
+
+        # init width image
+        self.ShowViewIns.width, qimage = ShowView.init_label_image(640, 480)
+        self.ShowViewIns.width_image.setPixmap(
+            QPixmap.fromImage(qimage).scaled(320, 240, Qt.KeepAspectRatio))
 
     def clearList(self):
         self.list_widget.clear()
-        # self.ShowViewIns.origin_image.setText("")
+        self.ShowViewIns.origin_image.setText("Please add images and select an image :)")
+        self.ShowViewIns.quality_image.setText(" ")
+        self.ShowViewIns.angle_image.setText(" ")
+        self.ShowViewIns.width_image.setText(" ")
